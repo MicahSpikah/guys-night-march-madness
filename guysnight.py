@@ -118,6 +118,30 @@ for date in [
         state = game["gameState"]
         home = game["home"]["names"]["short"]
         away = game["away"]["names"]["short"]
+        if date.today().month == date.month and date.today().day == date.day:
+            home_holders = [
+                player for player, teams in teams_by_player.items() if home in teams
+            ]
+            away_holders = [
+                player for player, teams in teams_by_player.items() if away in teams
+            ]
+            if home_holders or away_holders:
+                print(
+                    f"{game['startTime']} - {home} ({game['home']['seed']}) vs {away} ({game['away']['seed']}) - {game['network']}"
+                )
+                if state == "live":
+                    if not game["currentPeriod"]:
+                        print(
+                            f"    LIVE: {game['home']['score']}-{game['away']['score']} (HALFTIME)"
+                        )
+                    else:
+                        print(
+                            f"    LIVE: {game['home']['score']}-{game['away']['score']} {game['contestClock']} ({game['currentPeriod']})"
+                        )
+                elif state == "final":
+                    print(f"    FINAL: {game['home']['score']}-{game['away']['score']}")
+                print(f"    {home}: {', '.join(map(str, home_holders))}")
+                print(f"    {away}: {', '.join(map(str, away_holders))}")
         if state == "final":
             if game["home"]["winner"]:
                 winner = home
@@ -137,23 +161,6 @@ for date in [
                     teams.remove(loser)
                 except ValueError:
                     pass
-        else:
-            home_holders = [
-                player for player, teams in teams_by_player.items() if home in teams
-            ]
-            away_holders = [
-                player for player, teams in teams_by_player.items() if away in teams
-            ]
-            if home_holders or away_holders:
-                print(
-                    f"{game['startTime']} - {home} ({game['home']['seed']}) vs {away} ({game['away']['seed']}) - {game['network']}"
-                )
-                if state == "live":
-                    print(
-                        f"    LIVE: {game['home']['score']}-{game['away']['score']} {game['contestClock']} ({game['currentPeriod']})"
-                    )
-                print(f"    {home}: {', '.join(map(str, home_holders))}")
-                print(f"    {away}: {', '.join(map(str, away_holders))}")
 
 for player, score in score_by_player.items():
     print(f"{player}: {score}")
