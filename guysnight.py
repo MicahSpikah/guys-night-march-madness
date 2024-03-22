@@ -96,10 +96,10 @@ teams_by_player = {
     ],
 }
 
-BASE_URL = "https://data.ncaa.com/casablanca/scoreboard/basketball-men/d1/2024/"
-
-START_DATE = date(2024, 3, 19)
-FINAL_DATE = min(date(2024, 4, 8), date.today())
+BASE_URL = "https://data.ncaa.com/casablanca/scoreboard/basketball-men/d1/"
+CURRENT_YEAR = date.today().year
+START_DATE = date(CURRENT_YEAR, 3, 19)
+FINAL_DATE = min(date(CURRENT_YEAR, 4, 8), date.today())
 
 score_by_player = {player: 0 for player, _ in teams_by_player.items()}
 
@@ -108,9 +108,12 @@ for date in [
     for n in range(int(1 + (FINAL_DATE - START_DATE).days))
 ]:
     response = requests.get(
-        f"{BASE_URL}/{date.month:02}/{date.day:02}/scoreboard.json", timeout=5
+        f"{BASE_URL}/{CURRENT_YEAR}/{date.month:02}/{date.day:02}/scoreboard.json", timeout=5
     )
     results = response.json()
+
+    if "games" not in results:
+        continue
 
     for game in [
         game["game"] for game in results["games"] if game["game"]["bracketId"]
