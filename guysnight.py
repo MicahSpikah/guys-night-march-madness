@@ -128,11 +128,11 @@ for date in [
                 loser = home
                 worth = int(game["away"]["seed"])
             if date.month == 3 and date.day < 21:
-                worth /= 2
+                worth //= 2
             for player, teams in teams_by_player.items():
                 for team in teams:
                     if winner == team:
-                        score_by_player[player] += int(worth)
+                        score_by_player[player] += worth
                 try:
                     teams.remove(loser)
                 except ValueError:
