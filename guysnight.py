@@ -1,11 +1,12 @@
 """Who is playing whom in Brad's pick16 thing"""
 
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 import requests
+from pytz import timezone
 
 teams_by_player = {
     "Brad": [
-        "North Carolina",
+        "UConn",
         "Houston",
         "Purdue",
         "Auburn",
@@ -41,7 +42,7 @@ teams_by_player = {
         "Yale",
     ],
     "Jon": [
-        "North Carolina",
+        "UConn",
         "Houston",
         "Purdue",
         "Marquette",
@@ -77,7 +78,7 @@ teams_by_player = {
         "Colgate",
     ],
     "Aaron": [
-        "North Carolina",
+        "UConn",
         "Houston",
         "Marquette",
         "Iowa St.",
@@ -97,18 +98,22 @@ teams_by_player = {
 }
 
 BASE_URL = "https://data.ncaa.com/casablanca/scoreboard/basketball-men/d1/"
-CURRENT_YEAR = date.today().year
+now = datetime.now(timezone("US/Eastern"))
+today = date(now.year, now.month, now.day)
+CURRENT_YEAR = today.year
 START_DATE = date(CURRENT_YEAR, 3, 19)
-FINAL_DATE = min(date(CURRENT_YEAR, 4, 8), date.today())
+FINAL_DATE = min(date(CURRENT_YEAR, 4, 8), today)
 
 score_by_player = {player: 0 for player, _ in teams_by_player.items()}
+seed_by_team = {}
 
 for date in [
     START_DATE + timedelta(days=n)
     for n in range(int(1 + (FINAL_DATE - START_DATE).days))
 ]:
     response = requests.get(
-        f"{BASE_URL}/{CURRENT_YEAR}/{date.month:02}/{date.day:02}/scoreboard.json", timeout=5
+        f"{BASE_URL}/{CURRENT_YEAR}/{date.month:02}/{date.day:02}/scoreboard.json",
+        timeout=5,
     )
     results = response.json()
 
@@ -121,7 +126,7 @@ for date in [
         state = game["gameState"]
         home = game["home"]["names"]["short"]
         away = game["away"]["names"]["short"]
-        if date.today().month == date.month and date.today().day == date.day:
+        if today.month == date.month and today.day == date.day:
             home_holders = [
                 player for player, teams in teams_by_player.items() if home in teams
             ]
@@ -150,10 +155,12 @@ for date in [
                 winner = home
                 loser = away
                 worth = int(game["home"]["seed"])
+                seed_by_team[home] = worth
             else:
                 winner = away
                 loser = home
                 worth = int(game["away"]["seed"])
+                seed_by_team[away] = worth
             if date.month == 3 and date.day < 21:
                 worth //= 2
             for player, teams in teams_by_player.items():
@@ -170,4 +177,7 @@ for player, score in score_by_player.items():
 
 # To see teams remaining per player:
 # for player, teams in teams_by_player.items():
-#     print(f"{player}: {', '.join(map(str, teams))}")
+#     print()
+#     print(f"{player}:")
+#     for team in teams:
+#         print(f"{team} ({seed_by_team[team]})")
