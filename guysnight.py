@@ -104,7 +104,7 @@ today = date(now.year, now.month, now.day)
 score_by_player = {player: 0 for player, _ in teams_by_player.items()}
 seed_by_team = {}
 
-for date in [
+tournament_dates = [
     date(2024, 3, 19),
     date(2024, 3, 20),
     date(2024, 3, 21),
@@ -117,8 +117,16 @@ for date in [
     date(2024, 3, 31),
     date(2024, 4, 6),
     date(2024, 4, 8),
-]:
-    if date > today:
+]
+
+next_tournament_date = (
+    today
+    if today in tournament_dates
+    else next((date for date in tournament_dates if date > today), None)
+)
+
+for date in tournament_dates:
+    if next_tournament_date and date > next_tournament_date:
         break
     response = requests.get(
         f"{BASE_URL}/{date.year}/{date.month:02}/{date.day:02}/scoreboard.json",
@@ -129,13 +137,16 @@ for date in [
     if "games" not in results:
         continue
 
+    if date == next_tournament_date and today != date:
+        print(f"Upcoming games on {next_tournament_date}:")
+
     for game in [
         game["game"] for game in results["games"] if game["game"]["bracketId"]
     ]:
         state = game["gameState"]
         home = game["home"]["names"]["short"]
         away = game["away"]["names"]["short"]
-        if today.month == date.month and today.day == date.day:
+        if date == next_tournament_date:
             home_holders = [
                 player for player, teams in teams_by_player.items() if home in teams
             ]
