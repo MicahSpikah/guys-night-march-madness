@@ -100,19 +100,28 @@ teams_by_player = {
 BASE_URL = "https://data.ncaa.com/casablanca/scoreboard/basketball-men/d1/"
 now = datetime.now(timezone("US/Eastern"))
 today = date(now.year, now.month, now.day)
-CURRENT_YEAR = today.year
-START_DATE = date(CURRENT_YEAR, 3, 19)
-FINAL_DATE = min(date(CURRENT_YEAR, 4, 8), today)
 
 score_by_player = {player: 0 for player, _ in teams_by_player.items()}
 seed_by_team = {}
 
 for date in [
-    START_DATE + timedelta(days=n)
-    for n in range(int(1 + (FINAL_DATE - START_DATE).days))
+        date(2024,3,19),
+        date(2024,3,20),
+        date(2024,3,21),
+        date(2024,3,22),
+        date(2024,3,23),
+        date(2024,3,24),
+        date(2024,3,28),
+        date(2024,3,29),
+        date(2024,3,30),
+        date(2024,3,31),
+        date(2024,4,6),
+        date(2024,4,8),
 ]:
+    if date > today:
+        break
     response = requests.get(
-        f"{BASE_URL}/{CURRENT_YEAR}/{date.month:02}/{date.day:02}/scoreboard.json",
+        f"{BASE_URL}/{date.year}/{date.month:02}/{date.day:02}/scoreboard.json",
         timeout=5,
     )
     results = response.json()
