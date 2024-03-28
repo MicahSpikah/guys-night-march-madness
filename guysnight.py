@@ -1,6 +1,6 @@
 """Who is playing whom in Brad's pick16 thing"""
 
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import requests
 from pytz import timezone
 
@@ -105,18 +105,18 @@ score_by_player = {player: 0 for player, _ in teams_by_player.items()}
 seed_by_team = {}
 
 for date in [
-        date(2024,3,19),
-        date(2024,3,20),
-        date(2024,3,21),
-        date(2024,3,22),
-        date(2024,3,23),
-        date(2024,3,24),
-        date(2024,3,28),
-        date(2024,3,29),
-        date(2024,3,30),
-        date(2024,3,31),
-        date(2024,4,6),
-        date(2024,4,8),
+    date(2024, 3, 19),
+    date(2024, 3, 20),
+    date(2024, 3, 21),
+    date(2024, 3, 22),
+    date(2024, 3, 23),
+    date(2024, 3, 24),
+    date(2024, 3, 28),
+    date(2024, 3, 29),
+    date(2024, 3, 30),
+    date(2024, 3, 31),
+    date(2024, 4, 6),
+    date(2024, 4, 8),
 ]:
     if date > today:
         break
