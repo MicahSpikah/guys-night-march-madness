@@ -198,7 +198,8 @@ for date in tournament_dates:
                 except ValueError:
                     pass
 
-print()
+if next_tournament_date:
+    print()
 for player, score in score_by_player.items():
     print(f"{player}: {score}")
 
