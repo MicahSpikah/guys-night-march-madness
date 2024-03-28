@@ -161,8 +161,14 @@ for date in [
                 loser = home
                 worth = int(game["away"]["seed"])
                 seed_by_team[away] = worth
-            if date.month == 3 and date.day < 21:
+            if game["bracketRound"] == ("First Four&#174;"):
                 worth //= 2
+            elif game["bracketRound"] == ("Elite Eight&#174;"):
+                worth += 1
+            elif game["bracketRound"] == ("Final Four&#174;"):
+                worth += 3
+            elif game["bracketRound"] == ("Championship"):
+                worth += 5
             for player, teams in teams_by_player.items():
                 for team in teams:
                     if winner == team:
@@ -172,6 +178,7 @@ for date in [
                 except ValueError:
                     pass
 
+print()
 for player, score in score_by_player.items():
     print(f"{player}: {score}")
 
