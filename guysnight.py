@@ -190,14 +190,12 @@ for date in tournament_dates:
             elif game["bracketRound"] == ("Championship"):
                 worth += 5
             for player, teams in teams_by_player.items():
-                for team in teams:
-                    if winner == team:
-                        score_by_player[player] += worth
+                if winner in teams:
+                    score_by_player[player] += worth
                 try:
                     teams.remove(loser)
                 except ValueError:
                     pass
-
 if next_tournament_date:
     print()
 for player, score in score_by_player.items():
